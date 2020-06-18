@@ -1,3 +1,11 @@
 # piSquaredGarden
 arduino, raspberry pi, and a whole bunch of plant sensors
-## test
+# first
+## second
+### third
+#### fourth
+* dot
+- minus
+_under_
+*df*
+~dfa~
