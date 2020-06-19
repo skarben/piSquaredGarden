@@ -22,7 +22,7 @@
 {\list\listtemplateid17\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1601\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1602\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li1440\lin1440 }{\listname ;}\listid17}
 {\list\listtemplateid18\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid1701\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{lower-alpha\}.}{\leveltext\leveltemplateid1702\'02\'01.;}{\levelnumbers\'01;}\fi-360\li1440\lin1440 }{\listlevel\levelnfc2\levelnfcn2\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{lower-roman\}.}{\leveltext\leveltemplateid1703\'02\'02.;}{\levelnumbers\'01;}\fi-360\li2160\lin2160 }{\listname ;}\listid18}}
 {\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}{\listoverride\listid4\listoverridecount0\ls4}{\listoverride\listid5\listoverridecount0\ls5}{\listoverride\listid6\listoverridecount0\ls6}{\listoverride\listid7\listoverridecount0\ls7}{\listoverride\listid8\listoverridecount0\ls8}{\listoverride\listid9\listoverridecount0\ls9}{\listoverride\listid10\listoverridecount0\ls10}{\listoverride\listid11\listoverridecount0\ls11}{\listoverride\listid12\listoverridecount0\ls12}{\listoverride\listid13\listoverridecount0\ls13}{\listoverride\listid14\listoverridecount0\ls14}{\listoverride\listid15\listoverridecount0\ls15}{\listoverride\listid16\listoverridecount0\ls16}{\listoverride\listid17\listoverridecount0\ls17}{\listoverride\listid18\listoverridecount0\ls18}}
-\vieww19200\viewh20180\viewkind0
+\vieww19000\viewh20180\viewkind0
 \deftab720
 \pard\pardeftab720\ri0\sl276\slmult1\partightenfactor0
 
@@ -485,6 +485,53 @@ Sensor 14 : 0x28, 0xDB, 0x4E, 0x3A, 0x2A, 0x19, 0x01, 0xC4\
 the temperature probes must be called less than once every 2 seconds, some lag.\
 \
 Probes need power pin, needs to be on for ~5ms to stabilize, wait 10ms in code to be safe.\
+\
+19-06-2020\
+\
+Testing DFRobot capacitive soil moisture sensors:\
+\
+Dry Air analog reading (in direct sun): 533 (about this is max)\
+dry air in office: 516\
+Immersed in water reading: 248 (min, depends on how much of sensor is under water)\
+\
+Since these are analog readings, the length of wire and final configuration may affect readings, need to redo values\
+after installation. For now use these values, and ranges based on difference, no hard coded ranges.\
+\
+The temperature probes need to have two buses, connected to specifically pins 2 and 3, with pin 1 serving power.\
+Otherwise will not work\
+\
+The soil moisture sensors are very different from each other, need to calibrate and scale each one to give a comparative\
+number. This is with turning on/off before and after reading, with constant voltage, all very similar (526-535 for similar\
+conditions).\
+\
+Need to wait 100ms after powering sensors to stabilize.\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
 \
 \
 }

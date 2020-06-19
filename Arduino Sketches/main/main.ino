@@ -18,6 +18,9 @@ Samson Karben 2020
 #define ONE_WIRE_BUS 2
 #define ONE_WIRE_BUS2 3
 
+#define NUMTSENSORS 15 //number of temperature probe DS18B20 sensors
+#define NUMMSENSORS 12 //number of soil moisture analog sensors, used in loops later
+
 // Setup two oneWire instances to communicate with the OneWire devices
 OneWire oneWire(ONE_WIRE_BUS); //instance for Group 1
 OneWire oneWire2(ONE_WIRE_BUS2); //instance for Group 2
@@ -48,10 +51,11 @@ uint8_t sensor4[8] = { 0x28, 0xFA, 0x67, 0x24, 0x2A, 0x19, 0x01, 0x63 };
 uint8_t sensor6[8] = { 0x28, 0x10, 0x08, 0x59, 0x2A, 0x19, 0x01, 0xCE };
 uint8_t sensor7[8] = { 0x28, 0x38, 0xB7, 0x15, 0x2A, 0x19, 0x01, 0x0B };
 
-float tempC[15]; // for storing temperature data, 15 for 15 sensors
+float tempC[NUMTSENSORS]; // for storing temperature data, 15 for 15 sensors
 
 int tempPowerPin = 1; //pin for powering temperature pins on pin 1
 
+int soilMoisVal[NUMMSENSORS]; // for storing soil moisture data
 
 void setup() {
   // put your setup code here, to run once:
@@ -60,6 +64,9 @@ void setup() {
     ; // wait for serial port to connect. Needed for native USB port only
   }
   pinMode(tempPowerPin, OUTPUT); // set pin 1 for temp probes as power output
+  for (int i = 4; i < (NUMMSENSORS + 4); i++) { //set the power pins for the soil sensors
+    pinMode(i, OUTPUT);
+  }
   sensors.begin(); //begin group 1 sensors
   sensors2.begin(); //begin group 2 sensors
 }
@@ -67,8 +74,10 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   memset(tempC, 0, sizeof(tempC)); // clear temperature data
+  memset(soilMoisVal, 0, sizeof(soilMoisVal)); //clear soil moisture data
   digitalWrite(tempPowerPin, HIGH); // turn on temp sensors
-  delay(10); //wait until probes stabilize
+  delay(10); //wait until temperature probes stabilize  
+  OnStoreAllSoilMoisture(); //turn on and record all soil sensors 
   storeTemperature(); //store the temperature, can be called once every 2 seconds
   Serial.println("Temps:");
   for (int i = 0; i < 15; i++) {
@@ -76,9 +85,17 @@ void loop() {
     Serial.print(i);
     Serial.print(": ");
     Serial.print(tempC[i]);
-    Serial.println("°C");
+    Serial.println("°F");
   }
-  digitalWrite(tempPowerPin, LOW); //turn off temp sensors
+  Serial.println("Moisture:");
+  for (int i = 0; i < NUMMSENSORS; i++) {
+    Serial.print("Sensor ");
+    Serial.print(i);
+    Serial.print(": ");
+    Serial.println(soilMoisVal[i]); //print the value to serial port  
+  }
+  Serial.println("--------------");
+  turnOffSensors();
 }
 
 void storeTemperature() { //function to simplify calling all the sensors
@@ -100,4 +117,22 @@ void storeTemperature() { //function to simplify calling all the sensors
   tempC[12] = sensors.getTempC(sensor12);
   tempC[13] = sensors.getTempC(sensor13);
   tempC[14] = sensors.getTempC(sensor14);
+}
+
+void OnStoreAllSoilMoisture() { //function to simplify turning on and reading all soil sensors
+  for (int i = 4; i < (NUMMSENSORS + 4); i++) { //turn on moisture sensors
+  digitalWrite(i, HIGH);
+  }
+  delay(100); //wait until sensors stabilize
+  for (int i = 0; i < NUMMSENSORS ; i++) {
+    soilMoisVal[i] = analogRead(i); //connect sensor to Analog 0
+    delay(10); //wait for ADC to stabilize
+  }
+}
+
+void turnOffSensors() { //function to turn all sensors off
+  digitalWrite(tempPowerPin, LOW); //turn off temp sensors
+  for (int i = 5; i <= (NUMMSENSORS + 4); i++) { //turn off soil moisture sensors
+    digitalWrite(i, LOW);
+  }
 }
