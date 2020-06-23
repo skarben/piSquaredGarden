@@ -13,6 +13,8 @@ Samson Karben 2020
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
+#include <SHT1x.h> //include libraries for the SHT1x ambient air sensor
+
 // Data wire for OneWire DS18B20 temperature probes is plugged into digital pin 2 and 3 
 // on the Arduino. Pin 2 is group 1 of the sensors, pin 3 is group 2.
 #define ONE_WIRE_BUS 2
@@ -20,6 +22,12 @@ Samson Karben 2020
 
 #define NUMTSENSORS 15 //number of temperature probe DS18B20 sensors
 #define NUMMSENSORS 12 //number of soil moisture analog sensors, used in loops later
+
+// Specify data and clock connections and instantiate SHT1x object
+#define dataPin  22
+#define clockPin 23
+//#define powerPinA 24 //switched to constant 5v
+SHT1x sht1x(dataPin, clockPin);
 
 // Setup two oneWire instances to communicate with the OneWire devices
 OneWire oneWire(ONE_WIRE_BUS); //instance for Group 1
@@ -57,6 +65,13 @@ int tempPowerPin = 1; //pin for powering temperature pins on pin 1
 
 int soilMoisVal[NUMMSENSORS]; // for storing soil moisture data
 
+//for storing ambient air temps and humidity
+float ambTemp_c;
+float ambTemp_f;
+float ambHumidity;
+
+char clearSerial; //variable to hold serial trigger
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200); //begin serial
@@ -67,38 +82,33 @@ void setup() {
   for (int i = 4; i < (NUMMSENSORS + 4); i++) { //set the power pins for the soil sensors
     pinMode(i, OUTPUT);
   }
+  //pinMode(powerPinA, OUTPUT); //set pin 21 to be output for powering ambient air sensor
   sensors.begin(); //begin group 1 sensors
   sensors2.begin(); //begin group 2 sensors
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  memset(tempC, 0, sizeof(tempC)); // clear temperature data
-  memset(soilMoisVal, 0, sizeof(soilMoisVal)); //clear soil moisture data
-  digitalWrite(tempPowerPin, HIGH); // turn on temp sensors
-  delay(10); //wait until temperature probes stabilize  
-  OnStoreAllSoilMoisture(); //turn on and record all soil sensors 
-  storeTemperature(); //store the temperature, can be called once every 2 seconds
-  Serial.println("Temps:");
-  for (int i = 0; i < 15; i++) {
-    Serial.print("Sensor ");
-    Serial.print(i);
-    Serial.print(": ");
-    Serial.print(tempC[i]);
-    Serial.println("°F");
+  if (Serial.available()) {
+    clearSerial = Serial.read(); //clear serial of one character
+    memset(tempC, 0, sizeof(tempC)); // clear temperature data
+    memset(soilMoisVal, 0, sizeof(soilMoisVal)); //clear soil moisture data
+    ambTemp_c = 0;
+    ambTemp_f = 0;
+    ambHumidity = 0; 
+    getAllSoilMoisture(); //turn on and record all soil sensors
+    getAllTemperature(); //store the temperature, can be called once every 2 seconds
+    getAmbientTempHum();
+    serialLineData();
+    //serialLineVerbose();
+    //turnOffSensors();
   }
-  Serial.println("Moisture:");
-  for (int i = 0; i < NUMMSENSORS; i++) {
-    Serial.print("Sensor ");
-    Serial.print(i);
-    Serial.print(": ");
-    Serial.println(soilMoisVal[i]); //print the value to serial port  
-  }
-  Serial.println("--------------");
-  turnOffSensors();
+
 }
 
-void storeTemperature() { //function to simplify calling all the sensors
+void getAllTemperature() { //function to simplify calling all the temp sensors
+  digitalWrite(tempPowerPin, HIGH); // turn on temp sensors
+  delay(10); //wait until temperature probes stabilize
   sensors.requestTemperatures(); //get temps from the sensors
   sensors2.requestTemperatures();
   //store data in the array
@@ -117,9 +127,10 @@ void storeTemperature() { //function to simplify calling all the sensors
   tempC[12] = sensors.getTempC(sensor12);
   tempC[13] = sensors.getTempC(sensor13);
   tempC[14] = sensors.getTempC(sensor14);
+  digitalWrite(tempPowerPin, LOW); // turn off temp sensors
 }
 
-void OnStoreAllSoilMoisture() { //function to simplify turning on and reading all soil sensors
+void getAllSoilMoisture() { //function to simplify turning on and reading all soil sensors
   for (int i = 4; i < (NUMMSENSORS + 4); i++) { //turn on moisture sensors
   digitalWrite(i, HIGH);
   }
@@ -128,6 +139,10 @@ void OnStoreAllSoilMoisture() { //function to simplify turning on and reading al
     soilMoisVal[i] = analogRead(i); //connect sensor to Analog 0
     delay(10); //wait for ADC to stabilize
   }
+  for (int i = 4; i < (NUMMSENSORS + 4); i++) { //turn off moisture sensors
+  digitalWrite(i, LOW);
+  }
+
 }
 
 void turnOffSensors() { //function to turn all sensors off
@@ -135,4 +150,57 @@ void turnOffSensors() { //function to turn all sensors off
   for (int i = 5; i <= (NUMMSENSORS + 4); i++) { //turn off soil moisture sensors
     digitalWrite(i, LOW);
   }
+  //digitalWrite(powerPinA, LOW); //turn off ambient sensor
+}
+
+void getAmbientTempHum() { //turn on and get values for ambient air
+  //digitalWrite(powerPinA, HIGH); //turn on ambient sensor
+  //delay(1000); //wait to stabilize, may not be needed
+  // Read values from the sensor
+  ambTemp_c = sht1x.readTemperatureC();
+  ambTemp_f = sht1x.readTemperatureF();
+  ambHumidity = sht1x.readHumidity();
+  //digitalWrite(powerPinA, LOW); //turn off ambient sensor
+}
+
+void serialLineVerbose() { //print all data in a verbose way, with everything labelled
+  Serial.print("<Temps: ");
+  for (int i = 0; i < 15; i++) {
+    Serial.print("Sensor ");
+    Serial.print(i);
+    Serial.print(": ");
+    Serial.print(tempC[i]);
+    Serial.print("°C ");
+  }
+  Serial.print("Moisture: ");
+  for (int i = 0; i < NUMMSENSORS; i++) {
+    Serial.print(" Sensor ");
+    Serial.print(i);
+    Serial.print(": ");
+    Serial.print(soilMoisVal[i]); //print the value to serial port  
+  }
+  Serial.print(" Ambient Temperature and Humidity: ");
+  Serial.print("Temperature: ");
+  Serial.print(ambTemp_c, DEC);
+  Serial.print("°C / ");
+  Serial.print(ambTemp_f, DEC);
+  Serial.print("°F. Humidity: ");
+  Serial.print(ambHumidity);
+  Serial.print("%"); 
+  Serial.println(">");
+}
+
+void serialLineData() { //print all data, in one line, soil temp -> soil moisture -> ambient, comma separated
+  for (int i = 0; i < 15; i++) { //print all temperature probes in °C
+    Serial.print(tempC[i]);
+    Serial.print(",");
+  }
+  for (int i = 0; i < NUMMSENSORS; i++) { //print all moisture sensors
+    Serial.print(soilMoisVal[i]); //print the value to serial port
+    Serial.print(",");  
+  } 
+  Serial.print(ambTemp_c, DEC); //print ambient temp in °C
+  Serial.print(",");
+  Serial.print(ambHumidity); //print ambient humidity in %
+  Serial.println(); //print new line
 }
