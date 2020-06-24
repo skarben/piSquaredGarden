@@ -1,8 +1,8 @@
 /*
 The Arduino code to send data to a Raspberry Pi microcomputer via serial communication. 
 
-This code collects data from DS18B20 temperature probes, (TO DO: capacitive soil moisture, ambient 
-air temperature and humidity). Data from a square foot garden, 4' x 4'.
+This code collects data from DS18B20 temperature probes, capacitive soil moisture, ambient 
+air temperature and humidity. Data from a square foot garden, 4' x 4'.
 
 Modified from templates from included Arduino DallasTemperature library and _(TO DO: include other 
 mentions)
@@ -20,8 +20,8 @@ Samson Karben 2020
 #define ONE_WIRE_BUS 2
 #define ONE_WIRE_BUS2 3
 
-#define NUMTSENSORS 15 //number of temperature probe DS18B20 sensors
-#define NUMMSENSORS 12 //number of soil moisture analog sensors, used in loops later
+#define NUMTSENSORS 16 //number of temperature probe DS18B20 sensors
+#define NUMMSENSORS 16 //number of soil moisture analog sensors, used in loops later
 
 // Specify data and clock connections and instantiate SHT1x object
 #define dataPin  22
@@ -59,7 +59,7 @@ uint8_t sensor4[8] = { 0x28, 0xFA, 0x67, 0x24, 0x2A, 0x19, 0x01, 0x63 };
 uint8_t sensor6[8] = { 0x28, 0x10, 0x08, 0x59, 0x2A, 0x19, 0x01, 0xCE };
 uint8_t sensor7[8] = { 0x28, 0x38, 0xB7, 0x15, 0x2A, 0x19, 0x01, 0x0B };
 
-float tempC[NUMTSENSORS]; // for storing temperature data, 15 for 15 sensors
+float tempC[NUMTSENSORS]; // for storing temperature data, 16 for 15 sensors + blank for consistency
 
 int tempPowerPin = 1; //pin for powering temperature pins on pin 1
 
@@ -108,7 +108,7 @@ void loop() {
 
 void getAllTemperature() { //function to simplify calling all the temp sensors
   digitalWrite(tempPowerPin, HIGH); // turn on temp sensors
-  delay(10); //wait until temperature probes stabilize
+  delay(100); //wait until temperature probes stabilize
   sensors.requestTemperatures(); //get temps from the sensors
   sensors2.requestTemperatures();
   //store data in the array
@@ -127,6 +127,8 @@ void getAllTemperature() { //function to simplify calling all the temp sensors
   tempC[12] = sensors.getTempC(sensor12);
   tempC[13] = sensors.getTempC(sensor13);
   tempC[14] = sensors.getTempC(sensor14);
+  tempC[15] = -127.0;
+  
   digitalWrite(tempPowerPin, LOW); // turn off temp sensors
 }
 
@@ -137,7 +139,7 @@ void getAllSoilMoisture() { //function to simplify turning on and reading all so
   delay(100); //wait until sensors stabilize
   for (int i = 0; i < NUMMSENSORS ; i++) {
     soilMoisVal[i] = analogRead(i); //connect sensor to Analog 0
-    delay(10); //wait for ADC to stabilize
+    delay(20); //wait for ADC to stabilize
   }
   for (int i = 4; i < (NUMMSENSORS + 4); i++) { //turn off moisture sensors
   digitalWrite(i, LOW);
@@ -165,7 +167,7 @@ void getAmbientTempHum() { //turn on and get values for ambient air
 
 void serialLineVerbose() { //print all data in a verbose way, with everything labelled
   Serial.print("<Temps: ");
-  for (int i = 0; i < 15; i++) {
+  for (int i = 0; i < NUMTSENSORS; i++) {
     Serial.print("Sensor ");
     Serial.print(i);
     Serial.print(": ");
@@ -191,7 +193,7 @@ void serialLineVerbose() { //print all data in a verbose way, with everything la
 }
 
 void serialLineData() { //print all data, in one line, soil temp -> soil moisture -> ambient, comma separated
-  for (int i = 0; i < 15; i++) { //print all temperature probes in °C
+  for (int i = 0; i < NUMTSENSORS; i++) { //print all temperature probes in °C
     Serial.print(tempC[i]);
     Serial.print(",");
   }
