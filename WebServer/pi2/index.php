@@ -1,7 +1,7 @@
 <html>
 <head>
-	<META  name="description" content="Alan Karben's Website.">
-	<META  name="keywords" content="Alan Karben, Karben, XML, SportsML, NewsML, NITF, online news, sports">
+	<META  name="description" content="Samson Karben's Website.">
+	<META  name="keywords" content="Samson Karben, Karben, arduino, raspberry pi, garden, automate">
 	<title>P^2 Garden</title>
 	<link rel="stylesheet" href="karben14.css" type="text/css" />
 </head>
@@ -20,7 +20,7 @@
 		$currentLocationKey = $_GET['location'];
 	}
 	else {
-		$currentLocationKey = '3';
+		$currentLocationKey = '1';
 	}
 	
 	if ($currentGardenKey == 'all') {
@@ -44,9 +44,9 @@
 	$query = "
 	SELECT
 		locationReadingSets.gardenKey
+		, locationReadings.locationKey
 		, locationReadingSets.ambientTemperature
 		, locationReadingSets.ambientHumidity
-		, locationReadings.locationKey
 		, locationReadings.temperature
 		, locationReadings.moisture
 		, locationReadingSets.recordedtimestamp
@@ -57,21 +57,49 @@
 		locationReadings.locationReadingSetsId = locationReadingSets.id
 		$gardenSQL
 		$locationSQL
+	ORDER BY
+		recordedtimestamp DESC, locationKey ASC
+		;
+	";
+	
+	$googleQuery = "
+	SELECT
+		locationReadingSets.gardenKey
+		, locationReadings.locationKey
+		, locationReadingSets.ambientTemperature
+		, locationReadingSets.ambientHumidity
+		, locationReadings.temperature
+		, locationReadings.moisture
+		, locationReadingSets.recordedtimestamp
+	FROM
+		locationReadings
+		, locationReadingSets
+	WHERE
+		locationReadings.locationReadingSetsId = locationReadingSets.id
 		;
 	";
 
 	$result = mysqli_query($connection, $query);
+	$googleResult = mysqli_query($connection, $googleQuery);
 	if (!$result) {
 	    die('Invalid query: ' . $query . mysqli_connect_error());
 	}
 	
-	echo "<h1>Garden Sensor Report</h1>";
-	echo "<p><a href='./index.php?garden=all&location=all'>get all data</a></p>";
+	echo "<h1>Garden " .$currentGardenKey . " Sensor Report</h1>";
+	echo "<p><a href='./index.php?garden=all&location=all'>Get all data</a></p>";
 		
 	echo "<table border='1' cellspacing='0' cellpadding='3'><tr><th>Time</th><th>Garden</th><th>Location</th><th>Ambient Temp</th><th>Ambient Humidity</th><th>Soil Temp</th><th>Moisture</th></tr>";
-	while ($row = @mysqli_fetch_assoc($result)) {
-			 echo "<tr><td>" . $row['recordedtimestamp'] . "</td><td>" . $row['gardenKey'] . "</td><td>" . $row['locationKey'] . "</td><td>" . $row['ambientTemperature'] . "</td><td>" . $row['ambientHumidity'] . "</td><td>" . $row['temperature'] . "</td><td>" . $row['moisture'] . "</td></tr>";
+	/*while ($row = @mysqli_fetch_assoc($result)) {
+		$items[] = $row;
 	}
+	//$items = array_reverse($items ,true);
+	foreach($items as $item){
+		echo "<tr><td>" . $item['recordedtimestamp'] . "</td><td>" . $item['gardenKey'] . "</td><td>" . $item['locationKey'] . "</td><td>" . $item['ambientTemperature'] . "</td><td>" . $item['ambientHumidity'] . "</td><td>" . $item['temperature'] . "</td><td>" . $item['moisture'] . "</td></tr>";
+	}*/
+	while ($row = @mysqli_fetch_assoc($result)) {
+		echo "<tr><td>" . $row['recordedtimestamp'] . "</td><td>" . $row['gardenKey'] . "</td><td>" . $row['locationKey'] . "</td><td>" . $row['ambientTemperature'] . "</td><td>" . $row['ambientHumidity'] . "</td><td>" . $row['temperature'] . "</td><td>" . $row['moisture'] . "</td></tr>";
+	}
+
 	echo "</table>";
 	
 	
@@ -97,12 +125,12 @@
 	
 	
 	
-	if (isset($_GET['data'])) {
+	if (isset($_GET['data']) AND strlen($_GET['data']) > 150 AND explode(",", $_GET['data'])[35] == $inputPassword) {
 		$dataString = $_GET['data'];
 		echo "<h1>This data was sent:</h1>";
 		echo "<pre>" . $dataString . "</pre>";
 		
-		
+		// explode(",", $_GET['data'])[35] == $inputPassword
 		
 		
 		

@@ -1,0 +1,29 @@
+{
+"cols": [
+  {"id":"","label":"gardenKey","pattern":"","type":"number"},
+  {"id":"","label":"locationKey","pattern":"","type":"number"}
+  {"id":"","label":"ambientTemperature","pattern":"","type":"number"}
+  {"id":"","label":"ambientHumidity","pattern":"","type":"number"}
+  {"id":"","label":"temperature","pattern":"","type":"number"}
+  {"id":"","label":"moisture","pattern":"","type":"number"}
+  {"id":"","label":"recordedtimestamp","pattern":"","type":"string"}
+  ],
+"rows": [
+  {"c":[{"v":1,"f":null},{"v":1,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":23.56,"f":null},{"v":509.0,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":2,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":22.37,"f":null},{"v":517.0,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":3,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":23.00,"f":null},{"v":522.0,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":4,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":23.25,"f":null},{"v":533,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":5,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":23.19,"f":null},{"v":527,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":6,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":22.94,"f":null},{"v":536,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":7,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":23.00,"f":null},{"v":538,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":8,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":22.69,"f":null},{"v":536,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":9,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":23.19,"f":null},{"v":538,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":10,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":22.81,"f":null},{"v":540,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":11,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":23.00,"f":null},{"v":530,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":12,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":23.19,"f":null},{"v":531,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":13,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":23.25,"f":null},{"v":493,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":14,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":22.81,"f":null},{"v":458,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":15,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":23.37,"f":null},{"v":421,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  {"c":[{"v":1,"f":null},{"v":16,"f":null},{"v":24.81,"f":null},{"v":81.24,"f":null},{"v":-127.00,"f":null},{"v":370,"f":null},{"v":"2020-06-23 19:15:11","f":null}]},
+  ]
+}

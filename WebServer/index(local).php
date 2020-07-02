@@ -44,9 +44,9 @@
 	$query = "
 	SELECT
 		locationReadingSets.gardenKey
+		, locationReadings.locationKey
 		, locationReadingSets.ambientTemperature
 		, locationReadingSets.ambientHumidity
-		, locationReadings.locationKey
 		, locationReadings.temperature
 		, locationReadings.moisture
 		, locationReadingSets.recordedtimestamp
@@ -59,8 +59,26 @@
 		$locationSQL
 		;
 	";
+	
+	$googleQuery = "
+	SELECT
+		locationReadingSets.gardenKey
+		, locationReadings.locationKey
+		, locationReadingSets.ambientTemperature
+		, locationReadingSets.ambientHumidity
+		, locationReadings.temperature
+		, locationReadings.moisture
+		, locationReadingSets.recordedtimestamp
+	FROM
+		locationReadings
+		, locationReadingSets
+	WHERE
+		locationReadings.locationReadingSetsId = locationReadingSets.id
+		;
+	";
 
 	$result = mysqli_query($connection, $query);
+	$googleResult = mysqli_query($connection, $googleQuery);
 	if (!$result) {
 	    die('Invalid query: ' . $query . mysqli_connect_error());
 	}
