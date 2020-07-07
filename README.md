@@ -10,3 +10,5 @@ Sensors regularly capture readings for ambient temperature, humidity, and sunlig
 Data is channeled back into irrigation controls to optimize plant growth within the square foot garden.
 
 Insights from this data could be used in the future to generate optimal climate-specific planting strategies.
+
+Website with more info here: https://pir2garden.com
